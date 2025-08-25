@@ -1,0 +1,39 @@
+networks:
+  compose-redes:
+    
+volumes:
+  compose-database:
+
+services:
+  database:
+    image: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: todo
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    networks:
+      - compose-redes
+      
+  app:
+    image: compose-app
+    build:
+      context: ./app
+      dockerfile: .ci/Dockerfile
+    restart: unless-stopped
+    environment:
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=todo
+    ports:
+      - 5000:5000
+    networks:
+      - compose-redes
+    depends_on:
+      - database
+      
+      
+  

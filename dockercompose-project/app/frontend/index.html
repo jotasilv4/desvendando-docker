@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Gerenciador de Tarefas Inteligente</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-tasks"></i>
+                    <span>TaskFlow</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3>Menu</h3>
+                    <a href="#" class="nav-item active" data-filter="all">
+                        <i class="fas fa-list"></i>
+                        <span>Todas as Tarefas</span>
+                        <span class="nav-badge" id="allCount">0</span>
+                    </a>
+                    <a href="#" class="nav-item" data-filter="today">
+                        <i class="fas fa-calendar-day"></i>
+                        <span>Hoje</span>
+                        <span class="nav-badge" id="todayCount">0</span>
+                    </a>
+                    <a href="#" class="nav-item" data-filter="pending">
+                        <i class="fas fa-clock"></i>
+                        <span>Pendentes</span>
+                        <span class="nav-badge" id="pendingCount">0</span>
+                    </a>
+                    <a href="#" class="nav-item" data-filter="completed">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Concluídas</span>
+                        <span class="nav-badge" id="completedCount">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Categorias</h3>
+                    <div class="category-list">
+                        <span class="category-item" data-category="work">
+                            <span class="category-color" style="background: #4facfe;"></span>
+                            Trabalho
+                        </span>
+                        <span class="category-item" data-category="personal">
+                            <span class="category-color" style="background: #ff6b6b;"></span>
+                            Pessoal
+                        </span>
+                        <span class="category-item" data-category="shopping">
+                            <span class="category-color" style="background: #ffd93d;"></span>
+                            Compras
+                        </span>
+                        <span class="category-item" data-category="health">
+                            <span class="category-color" style="background: #6bcb77;"></span>
+                            Saúde
+                        </span>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="health-status" id="healthStatus">
+                    <div class="status-indicator">
+                        <span class="status-dot"></span>
+                        <span>Conectando...</span>
+                    </div>
+                    <div class="status-actions">
+                        <button id="refreshBtn" class="icon-btn" title="Recarregar">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Todas as Tarefas</h1>
+                    <p class="subtitle" id="pageSubtitle">Organize suas tarefas de forma eficiente</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar tarefas...">
+                    </div>
+                    <button class="btn btn-primary" id="addTaskBtn">
+                        <i class="fas fa-plus"></i>
+                        Nova Tarefa
+                    </button>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(79, 172, 254, 0.1);">
+                        <i class="fas fa-list" style="color: #4facfe;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="totalTasks">0</h3>
+                        <p>Total de Tarefas</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(255, 107, 107, 0.1);">
+                        <i class="fas fa-clock" style="color: #ff6b6b;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="pendingTasks">0</h3>
+                        <p>Pendentes</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(107, 203, 119, 0.1);">
+                        <i class="fas fa-check-circle" style="color: #6bcb77;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="completedTasks">0</h3>
+                        <p>Concluídas</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(255, 217, 61, 0.1);">
+                        <i class="fas fa-calendar-day" style="color: #ffd93d;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="todayTasks">0</h3>
+                        <p>Para Hoje</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="content-header">
+                    <div class="view-options">
+                        <div class="view-toggle">
+                            <button class="view-btn active" data-view="list">
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <button class="view-btn" data-view="grid">
+                                <i class="fas fa-th"></i>
+                            </button>
+                        </div>
+                        <div class="sort-options">
+                            <select id="sortSelect">
+                                <option value="newest">Mais Recentes</option>
+                                <option value="oldest">Mais Antigas</option>
+                                <option value="az">A-Z</option>
+                                <option value="za">Z-A</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="todos-container">
+                    <div id="loading" class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <p>Carregando suas tarefas...</p>
+                    </div>
+
+                    <div id="todosList" class="todos-list list-view"></div>
+
+                    <div id="emptyState" class="empty-state hidden">
+                        <div class="empty-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h3>Nenhuma tarefa encontrada</h3>
+                        <p>Que tal adicionar sua primeira tarefa?</p>
+                        <button class="btn btn-primary" id="emptyAddBtn">
+                            <i class="fas fa-plus"></i>
+                            Criar Primeira Tarefa
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="taskModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Adicionar Nova Tarefa</h2>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="taskForm">
+                <input type="hidden" id="taskId">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="taskTitle">Título *</label>
+                            <input type="text" id="taskTitle" required placeholder="Digite o título da tarefa">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="taskDescription">Descrição</label>
+                            <textarea id="taskDescription" placeholder="Detalhes da tarefa (opcional)" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="taskCategory">Categoria</label>
+                            <select id="taskCategory">
+                                <option value="">Sem categoria</option>
+                                <option value="work">Trabalho</option>
+                                <option value="personal">Pessoal</option>
+                                <option value="shopping">Compras</option>
+                                <option value="health">Saúde</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskPriority">Prioridade</label>
+                            <select id="taskPriority">
+                                <option value="low">Baixa</option>
+                                <option value="medium" selected>Média</option>
+                                <option value="high">Alta</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="taskCompleted">
+                                <span class="checkmark"></span>
+                                Tarefa concluída
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="modalCancel">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="modalSubmit">
+                        <i class="fas fa-plus"></i>
+                        Adicionar Tarefa
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">
+        <div class="toast-content">
+            <i class="toast-icon"></i>
+            <div class="toast-message"></div>
+            <button class="toast-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
